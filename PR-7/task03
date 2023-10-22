@@ -1,1 +1,91 @@
+using System;
+using System.Collections.Generic;
+
+public class Money
+{
+    public decimal Amount { get; set; }
+    public string Currency { get; set; }
+
+    public Money(decimal amount, string currency)
+    {
+        Amount = amount;
+        Currency = currency;
+    }
+
+    public static bool operator ==(Money money1, Money money2)
+    {
+        return money1.Equals(money2);
+    }
+
+    public static bool operator !=(Money money1, Money money2)
+    {
+        return !(money1 == money2);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+        {
+            return false;
+        }
+
+        Money other = (Money)obj;
+        return Amount == other.Amount && Currency == other.Currency;
+    }
+
+    public override int GetHashCode()
+    {
+        return (Currency.GetHashCode() * 397) ^ Amount.GetHashCode();
+    }
+}
+
+public class CurrencyConverter
+{
+    public Dictionary<string, decimal> ExchangeRates { get; set; }
+
+    public CurrencyConverter()
+    {
+        ExchangeRates = new Dictionary<string, decimal>();
+    }
+
+    public void AddExchangeRate(string currency, decimal rate)
+    {
+        ExchangeRates[currency] = rate;
+    }
+
+    public Money Convert(Money money, string targetCurrency)
+    {
+        if (ExchangeRates.ContainsKey(money.Currency) && ExchangeRates.ContainsKey(targetCurrency))
+        {
+            decimal rate = ExchangeRates[targetCurrency] / ExchangeRates[money.Currency];
+            decimal convertedAmount = money.Amount * rate;
+            return new Money(convertedAmount, targetCurrency);
+        }
+
+        throw new ArgumentException("Invalid currency");
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        CurrencyConverter converter = new CurrencyConverter();
+        converter.AddExchangeRate("USD", 1.0m);
+        converter.AddExchangeRate("EUR", 0.85m);
+
+        Money money1 = new Money(100, "USD");
+        Money money2 = converter.Convert(money1, "EUR");
+
+        Console.WriteLine(money1.Amount + " " + money1.Currency);
+        Console.WriteLine(money2.Amount + " " + money2.Currency);
+
+        bool areEqual = (money1 == money2);
+        bool areNotEqual = (money1 != money2);
+
+        Console.WriteLine($"Are equal: {areEqual}");
+        Console.WriteLine($"Are not equal: {areNotEqual}");
+    }
+}
+
 
