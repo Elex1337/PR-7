@@ -1,1 +1,103 @@
+using System;
+
+public class Array
+{
+    private int[] data;
+
+    public int Length => data.Length;
+
+    public Array(params int[] elements)
+    {
+        data = elements;
+    }
+
+    public int this[int index]
+    {
+        get
+        {
+            if (index < 0 || index >= data.Length)
+                throw new IndexOutOfRangeException("Index is out of range.");
+            return data[index];
+        }
+        set
+        {
+            if (index < 0 || index >= data.Length)
+                throw new IndexOutOfRangeException("Index is out of range.");
+            data[index] = value;
+        }
+    }
+
+    public static bool operator ==(Array arr1, Array arr2)
+    {
+        if (arr1.Length != arr2.Length)
+            return false;
+
+        for (int i = 0; i < arr1.Length; i++)
+        {
+            if (arr1[i] != arr2[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    public static bool operator !=(Array arr1, Array arr2)
+    {
+        return !(arr1 == arr2);
+    }
+
+    public static Array operator +(Array arr1, Array arr2)
+    {
+        int[] result = new int[arr1.Length + arr2.Length];
+        arr1.data.CopyTo(result, 0);
+        arr2.data.CopyTo(result, arr1.Length);
+        return new Array(result);
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null || GetType() != obj.GetType())
+            return false;
+
+        Array other = (Array)obj;
+
+        if (Length != other.Length)
+            return false;
+
+        for (int i = 0; i < Length; i++)
+        {
+            if (this[i] != other[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        return data.GetHashCode();
+    }
+}
+class Program
+{
+    static void Main()
+    {
+        Array arr1 = new Array(1, 2, 3);
+        Array arr2 = new Array(4, 5, 6);
+        Array arr3 = new Array(1, 2, 3);
+
+        Array arr4 = arr1 + arr2;
+
+        Console.WriteLine("Concatenation result:");
+        for (int i = 0; i < arr4.Length; i++)
+        {
+            Console.Write(arr4[i] + " ");
+        }
+        Console.WriteLine();
+
+        Console.WriteLine($"arr1 == arr2: {arr1 == arr2}"); 
+        Console.WriteLine($"arr1 == arr3: {arr1 == arr3}"); 
+        Console.WriteLine($"arr1 != arr2: {arr1 != arr2}"); 
+    }
+}
 
