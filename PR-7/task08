@@ -1,1 +1,117 @@
+public class Frac
+{
+    public int Numerator { get; private set; }
+    public int Denominator { get; private set; }
+
+    public Frac(int numerator, int denominator)
+    {
+        if (denominator == 0)
+            throw new ArgumentException("Denominator cannot be zero.");
+
+        int gcd = GCD(Math.Abs(numerator), Math.Abs(denominator));
+        Numerator = numerator / gcd;
+        Denominator = denominator / gcd;
+
+        if (denominator < 0)
+        {
+            Numerator = -Numerator;
+            Denominator = -Denominator;
+        }
+    }
+
+    private int GCD(int a, int b)
+    {
+        while (b != 0)
+        {
+            int temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+    }
+
+    public override string ToString()
+    {
+        return $"{Numerator}/{Denominator}";
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is Frac other)
+        {
+            return Numerator == other.Numerator && Denominator == other.Denominator;
+        }
+        return false;
+    }
+
+    public static bool operator ==(Frac a, Frac b)
+    {
+        return a.Equals(b);
+    }
+
+    public static bool operator !=(Frac a, Frac b)
+    {
+        return !(a == b);
+    }
+
+    public static explicit operator double(Frac frac)
+    {
+        return (double)frac.Numerator / frac.Denominator;
+    }
+
+    public static Frac operator +(Frac a, Frac b)
+    {
+        int newNumerator = a.Numerator * b.Denominator + b.Numerator * a.Denominator;
+        int newDenominator = a.Denominator * b.Denominator;
+        return new Frac(newNumerator, newDenominator);
+    }
+
+    public static Frac operator -(Frac a, Frac b)
+    {
+        int newNumerator = a.Numerator * b.Denominator - b.Numerator * a.Denominator;
+        int newDenominator = a.Denominator * b.Denominator;
+        return new Frac(newNumerator, newDenominator);
+    }
+
+    public static Frac operator *(Frac a, Frac b)
+    {
+        int newNumerator = a.Numerator * b.Numerator;
+        int newDenominator = a.Denominator * b.Denominator;
+        return new Frac(newNumerator, newDenominator);
+    }
+
+    public static Frac operator /(Frac a, Frac b)
+    {
+        if (b.Numerator == 0)
+            throw new DivideByZeroException("Cannot divide by zero.");
+
+        int newNumerator = a.Numerator * b.Denominator;
+        int newDenominator = a.Denominator * b.Numerator;
+        return new Frac(newNumerator, newDenominator);
+    }
+}
+class Program
+{
+    static void Main()
+    {
+        Frac frac1 = new Frac(1, 2);
+        Frac frac2 = new Frac(3, 4);
+
+        Frac sum = frac1 + frac2;
+        Frac difference = frac1 - frac2;
+        Frac product = frac1 * frac2;
+        Frac quotient = frac1 / frac2;
+
+        Console.WriteLine($"Sum: {sum}");
+        Console.WriteLine($"Difference: {difference}");
+        Console.WriteLine($"Product: {product}");
+        Console.WriteLine($"Quotient: {quotient}");
+
+        double doubleValue = (double)frac1;
+        Console.WriteLine($"Double value of frac1: {doubleValue}");
+
+        Console.WriteLine($"frac1 == frac2: {frac1 == frac2}");
+        Console.WriteLine($"frac1 != frac2: {frac1 != frac2}");
+    }
+}
 
