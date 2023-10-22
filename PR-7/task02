@@ -1,1 +1,45 @@
+using System;
+using System.Linq;
 
+public class ArrayContainer
+{
+    private int[] array;
+
+    public ArrayContainer(int[] arr)
+    {
+        array = arr;
+    }
+
+    public int Sum()
+    {
+        return array.Sum();
+    }
+
+    public static bool operator >(ArrayContainer a, ArrayContainer b)
+    {
+        return a.Sum() > b.Sum();
+    }
+
+    public static bool operator <(ArrayContainer a, ArrayContainer b)
+    {
+        return a.Sum() < b.Sum();
+    }
+}
+
+public class Program
+{
+    public static void Main()
+    {
+        int[] arr1 = { 1, 2, 3 };
+        int[] arr2 = { 4, 5, 6 };
+
+        ArrayContainer container1 = new ArrayContainer(arr1);
+        ArrayContainer container2 = new ArrayContainer(arr2);
+
+        bool isGreaterThan = container1 > container2;
+        bool isLessThan = container1 < container2;
+
+        Console.WriteLine($"container1 > container2: {isGreaterThan}"); // Вернет false
+        Console.WriteLine($"container1 < container2: {isLessThan}");    
+    }
+}
